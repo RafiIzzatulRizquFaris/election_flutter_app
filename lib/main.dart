@@ -1,5 +1,5 @@
+import 'package:election_flutter_app/home.dart';
 import 'package:election_flutter_app/launcher.dart';
-import 'package:election_flutter_app/login.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: token == null ? Launcher() : Login(),
+      home: token == null ? Launcher() : Home(),
     );
   }
 }
