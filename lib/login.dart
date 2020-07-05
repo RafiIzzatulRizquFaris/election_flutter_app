@@ -114,7 +114,6 @@ class LoginScreen extends State<Login>{
         width: MediaQuery.of(context).size.width,
         child: TextFormField(
           controller: emailController,
-          autofocus: true,
           style: TextStyle(
             color: Colors.white,
           ),
