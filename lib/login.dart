@@ -10,6 +10,10 @@ class Login extends StatefulWidget{
 }
 
 class LoginScreen extends State<Login>{
+
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -109,6 +113,7 @@ class LoginScreen extends State<Login>{
         height: 60,
         width: MediaQuery.of(context).size.width,
         child: TextFormField(
+          controller: emailController,
           autofocus: true,
           style: TextStyle(
             color: Colors.white,
@@ -145,6 +150,7 @@ class LoginScreen extends State<Login>{
         height: 60,
         width: MediaQuery.of(context).size.width,
         child: TextField(
+          controller: passwordController,
           style: TextStyle(
             color: Colors.white,
           ),
