@@ -21,8 +21,10 @@ class LauncherScreen extends State<Launcher>{
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Text("Launcher"),
+    return Scaffold(
+      body: Center(
+        child: Text("Launcher"),
+      ),
     );
   }
 
