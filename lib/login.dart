@@ -1,18 +1,31 @@
 import 'package:election_flutter_app/home.dart';
+import 'package:election_flutter_app/login_contract.dart';
+import 'package:election_flutter_app/login_presenter.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class Login extends StatefulWidget{
+class Login extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
     return LoginScreen();
   }
-
 }
 
-class LoginScreen extends State<Login>{
-
+class LoginScreen extends State<Login> implements LoginContractView {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  LoginPresenter loginPresenter;
+  var isLoading;
+
+  LoginScreen() {
+    loginPresenter = LoginPresenter(this);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    isLoading = false;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,40 +38,26 @@ class LoginScreen extends State<Login>{
             colors: [Colors.blue, Colors.lightBlueAccent],
           ),
         ),
-        child: ListView(
-          children: [
-            Column(
-              children: [
-                Row(
-                  children: [
-                    verticalTitle(),
-                    textLogin(),
-                  ],
-                ),
-                inputEmail(),
-                inputPassword(),
-                buttonLogin(),
-                firstTime(),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  mainForm() {
-    return Expanded(
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topRight: Radius.circular(24),
-            topLeft: Radius.circular(24),
-          ),
-        ),
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        child: Column(children: [ListView(children: [],),],),
+        child: isLoading
+            ? Center(child: CircularProgressIndicator(),)
+            : ListView(
+                children: [
+                  Column(
+                    children: [
+                      Row(
+                        children: [
+                          verticalTitle(),
+                          textLogin(),
+                        ],
+                      ),
+                      inputEmail(),
+                      inputPassword(),
+                      buttonLogin(),
+                      firstTime(),
+                    ],
+                  ),
+                ],
+              ),
       ),
     );
   }
@@ -71,10 +70,7 @@ class LoginScreen extends State<Login>{
         child: Text(
           "Sign In",
           style: TextStyle(
-              color: Colors.white,
-              fontSize: 38,
-              fontWeight: FontWeight.w900
-          ),
+              color: Colors.white, fontSize: 38, fontWeight: FontWeight.w900),
         ),
       ),
     );
@@ -193,15 +189,21 @@ class LoginScreen extends State<Login>{
                 color: Colors.blue[300],
                 blurRadius: 10,
                 spreadRadius: 1,
-                offset: Offset(5, 5)
-            ),
+                offset: Offset(5, 5)),
           ],
         ),
         child: FlatButton(
-          onPressed: (){
-            Navigator.push(context, MaterialPageRoute(builder: (context){
-              return Home();
-            }));
+          onPressed: () {
+            if (emailController.text.trim().length > 0 &&
+                passwordController.text.trim().length > 0) {
+              setState(() {
+                isLoading = true;
+              });
+              loginPresenter.loadLoginData(
+                  emailController.text.trim(), passwordController.text.trim());
+            }else{
+              print("object is null");
+            }
           },
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -230,7 +232,10 @@ class LoginScreen extends State<Login>{
 
   firstTime() {
     return Padding(
-      padding: EdgeInsets.only(top: 30, left: 30,),
+      padding: EdgeInsets.only(
+        top: 30,
+        left: 30,
+      ),
       child: Container(
         alignment: Alignment.topRight,
         height: 20,
@@ -244,7 +249,7 @@ class LoginScreen extends State<Login>{
               ),
             ),
             FlatButton(
-              onPressed: (){},
+              onPressed: () {},
               child: Text(
                 "Register now.",
                 style: TextStyle(
@@ -260,4 +265,18 @@ class LoginScreen extends State<Login>{
     );
   }
 
+  @override
+  setLoginData(String uid) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    await preferences.setString("uid", uid);
+    setState(() {
+      isLoading = false;
+    });
+    print(preferences.get("uid"));
+    if (!isLoading){
+      Navigator.push(context, MaterialPageRoute(builder: (context) {
+        return Home();
+      }));
+    }
+  }
 }
