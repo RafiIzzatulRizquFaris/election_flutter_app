@@ -16,6 +16,7 @@ class LoginScreen extends State<Login> implements LoginContractView {
   TextEditingController passwordController = TextEditingController();
   LoginPresenter loginPresenter;
   var isLoading;
+  var isError;
 
   LoginScreen() {
     loginPresenter = LoginPresenter(this);
@@ -25,6 +26,7 @@ class LoginScreen extends State<Login> implements LoginContractView {
   void initState() {
     super.initState();
     isLoading = false;
+    isError = false;
   }
 
   @override
@@ -39,7 +41,7 @@ class LoginScreen extends State<Login> implements LoginContractView {
           ),
         ),
         child: isLoading
-            ? Center(child: CircularProgressIndicator(),)
+            ? Center(child: CircularProgressIndicator(backgroundColor: Colors.white,),)
             : ListView(
                 children: [
                   Column(
@@ -266,17 +268,25 @@ class LoginScreen extends State<Login> implements LoginContractView {
   }
 
   @override
-  setLoginData(String uid) async {
+  setLoginData(List value) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    await preferences.setString("uid", uid);
+    await preferences.setString("uid", value[0]);
     setState(() {
       isLoading = false;
     });
     print(preferences.get("uid"));
-    if (!isLoading){
+    if (!isLoading && !isError && !value[1]){
       Navigator.push(context, MaterialPageRoute(builder: (context) {
         return Home();
       }));
     }
+  }
+
+  @override
+  onErrorLogin(String error) {
+    setState(() {
+      isError = true;
+    });
+    print("Error" + error);
   }
 }
