@@ -4,5 +4,6 @@ abstract class LoginContractPresenter{
 }
 
 abstract class LoginContractView{
-  setLoginData (String uid){}
+  setLoginData (List value){}
+  onErrorLogin (String error){}
 }
