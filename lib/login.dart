@@ -1,6 +1,7 @@
 import 'package:election_flutter_app/home.dart';
 import 'package:election_flutter_app/login_contract.dart';
 import 'package:election_flutter_app/login_presenter.dart';
+import 'package:election_flutter_app/post.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -276,8 +277,12 @@ class LoginScreen extends State<Login> implements LoginContractView {
     });
     print(preferences.get("uid"));
     if (!isLoading && !isError && !value[1]){
-      Navigator.push(context, MaterialPageRoute(builder: (context) {
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
         return Home();
+      }));
+    }else if (value[1]){
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context){
+        return Post();
       }));
     }
   }
