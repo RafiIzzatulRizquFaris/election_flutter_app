@@ -9,7 +9,9 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SharedPreferences preferences = await SharedPreferences.getInstance();
   var token = preferences.get("uid");
-  runApp(MyApp(token: token,));
+  runApp(MyApp(
+    token: token,
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -26,14 +28,29 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: token == null ? Launcher() : checkUid(token),
+      home: token == null
+          ? Launcher()
+          : Container(
+              child: FutureBuilder(
+                future: isAlreadyChosen(),
+                builder: (context, snapshot) {
+                  if(snapshot.data == false){
+                    return Home();
+                  }else{
+                    return Post();
+                  }
+                },
+              ),
+            ),
     );
   }
 
-  checkUid(String token) async {
+  Future<bool> isAlreadyChosen() async {
     Firestore firestore = Firestore.instance;
-    QuerySnapshot querySnapshot = await firestore.collection("user").where("id_user", isEqualTo: token).getDocuments();
-    bool chosen = querySnapshot.documents[0].data["chosen"];
-    chosen ? Post() : Home();
+    QuerySnapshot querySnapshot = await firestore
+        .collection("user")
+        .where("id_user", isEqualTo: token)
+        .getDocuments();
+    return querySnapshot.documents[0].data["chosen"];
   }
 }
