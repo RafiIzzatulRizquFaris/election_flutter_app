@@ -7,7 +7,7 @@ class InfoCandidatePresenter implements InfoCandidateContractPresenter {
   InfoCandidatePresenter(this._infoCandidateContractView);
 
   @override
-  Future<List> getInfoCandidate() async {
+  Future<List<DocumentSnapshot>> getInfoCandidate() async {
     Firestore firestore = Firestore.instance;
     QuerySnapshot snapshot =
         await firestore.collection("candidate").getDocuments();
@@ -19,6 +19,6 @@ class InfoCandidatePresenter implements InfoCandidateContractPresenter {
     getInfoCandidate()
         .then((value) => _infoCandidateContractView.setInfoCandidate(value))
         .catchError((error) =>
-            _infoCandidateContractView.setOnErrorInfoCandidate(error));
+            _infoCandidateContractView.setOnErrorInfoCandidate(error.toString()));
   }
 }
