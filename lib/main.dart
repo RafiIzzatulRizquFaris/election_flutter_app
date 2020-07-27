@@ -28,16 +28,20 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: token == null
+      home:
+      token == null
           ? Launcher()
           : Container(
               child: FutureBuilder(
                 future: isAlreadyChosen(),
                 builder: (context, snapshot) {
+                  print(snapshot.data);
                   if(snapshot.data == false){
                     return Home();
-                  }else{
+                  }else if(snapshot.data == true){
                     return Post();
+                  }else{
+                    return Home();
                   }
                 },
               ),
