@@ -53,7 +53,7 @@ class MyApp extends StatelessWidget {
     Firestore firestore = Firestore.instance;
     QuerySnapshot querySnapshot = await firestore
         .collection("user")
-        .where("id_user", isEqualTo: token)
+        .where("iduser", isEqualTo: token)
         .getDocuments();
     return querySnapshot.documents[0].data["chosen"];
   }
