@@ -38,7 +38,7 @@ class LoginScreen extends State<Login> implements LoginContractView {
           gradient: LinearGradient(
             begin: Alignment.topRight,
             end: Alignment.bottomLeft,
-            colors: [Colors.blue, Colors.lightBlueAccent],
+            colors: [Colors.blue, Colors.lightBlueAccent,],
           ),
         ),
         child: isLoading
