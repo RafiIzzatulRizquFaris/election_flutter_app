@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:election_flutter_app/info_candidate_contract.dart';
 import 'package:election_flutter_app/info_candidate_presenter.dart';
@@ -16,6 +18,8 @@ class HomeScreen extends State<Home>
     implements InfoCandidateContractView {
   InfoCandidatePresenter infoCandidatePresenter;
   List<DocumentSnapshot> infoCandidateList = List<DocumentSnapshot>();
+  int index = 0;
+
 //  CardController cardController;
   var isLoading;
 
@@ -58,20 +62,40 @@ class HomeScreen extends State<Home>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
-                        width: MediaQuery.of(context).size.width,
-                        margin: EdgeInsets.all(16),
-                        padding: EdgeInsets.all(10),
-                        child: Text(
-                          "Pilihanmu menentukan masa depan sekolahmu",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                          ),
+                        margin: EdgeInsets.all(10),
+                        child: Row(
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(top: 16, left: 10, bottom: 16, right: 10,  ),
+                              child: RotatedBox(
+                                quarterTurns: -1,
+                                child: Text(
+                                  "VOTE",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 38,
+                                      fontWeight: FontWeight.w900),
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: Text(
+                                "Pilihanmu menentukan masa depan sekolahmu",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                       Expanded(
                         child: Container(
-                          padding: EdgeInsets.all(10),
+                          padding: EdgeInsets.only(
+                            top: 10,
+                            bottom: 10,
+                          ),
                           width: MediaQuery.of(context).size.width,
                           decoration: BoxDecoration(
                             color: Colors.white,
@@ -80,13 +104,119 @@ class HomeScreen extends State<Home>
                               topRight: Radius.circular(30),
                             ),
                           ),
-                          child: Text("Section Two",),
+                          child: Column(
+                            children: [
+                              Expanded(
+                                child: PageView.builder(
+                                  itemBuilder: pageViewBuilder,
+                                  itemCount: infoCandidateList.length,
+                                  controller: PageController(
+                                    viewportFraction: 0.8,
+                                  ),
+                                  onPageChanged: pageViewOnChange,
+                                ),
+                              ),
+                              Container(
+                                margin: EdgeInsets.only(
+                                  top: 10,
+                                  bottom: 10,
+                                  left: 16,
+                                  right: 16,
+                                ),
+//                                padding: EdgeInsets.only(top: 6, bottom: 6,),
+                                width: MediaQuery.of(context).size.width,
+                                child: RaisedButton(
+                                  onPressed: () {},
+                                  elevation: 8,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                  hoverColor: Colors.blue,
+                                  focusColor: Colors.blue,
+                                  splashColor: Colors.amberAccent,
+                                  color: Colors.blueAccent,
+                                  textColor: Colors.white,
+                                  child: Padding(
+                                    padding: EdgeInsets.only(
+                                      top: 10,
+                                      bottom: 10,
+                                    ),
+                                    child: Text(
+                                      "Button",
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ],
                   ),
                 ),
               ),
+      ),
+    );
+  }
+
+  Widget pageViewBuilder(BuildContext context, int i) {
+    return Transform.scale(
+      scale: i == index ? 1 : 0.9,
+      child: Card(
+        shadowColor: Colors.black26,
+        elevation: 8,
+        color: Colors.blueAccent,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30),
+        ),
+        child: Column(
+          children: [
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.all(10),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.all(Radius.circular(30)),
+                  child: Image.network(
+                    infoCandidateList[i].data["candidate_photo"],
+                    fit: BoxFit.fitWidth,
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.all(10),
+              child: Text(
+                "Deva Abel Khan (XII RPL 1)",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                ),
+                textAlign: TextAlign.start,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(
+                top: 10,
+                left: 10,
+                bottom: 16,
+                right: 10,
+              ),
+              child: Text(
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.normal,
+                  fontSize: 16,
+                ),
+                textAlign: TextAlign.start,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -105,6 +235,14 @@ class HomeScreen extends State<Home>
   setOnErrorInfoCandidate(String error) {
     print(error);
   }
+
+  void pageViewOnChange(int value) {
+    setState(() {
+      index = value;
+    });
+    print(index);
+  }
+}
 
 //  infoCard() {
 //    print(infoCandidateList.length);
@@ -144,4 +282,3 @@ class HomeScreen extends State<Home>
 //  void completeCallback(CardSwipeOrientation orientation, int index) {
 //    print(index.toString());
 //  }
-}
