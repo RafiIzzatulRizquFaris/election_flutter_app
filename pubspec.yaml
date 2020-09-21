@@ -21,6 +21,8 @@ dependencies:
   flutter_tindercard: ^0.1.7
   flutter_svg: ^0.18.0
   wave: ^0.0.8
+  intl: any
+  flutter_countdown_timer: any
 
 dev_dependencies:
   flutter_test:
