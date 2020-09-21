@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:election_flutter_app/login_contract.dart';
+import 'package:election_flutter_app/contract/login_contract.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginPresenter implements LoginContractPresenter {

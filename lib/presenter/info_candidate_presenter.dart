@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:election_flutter_app/info_candidate_contract.dart';
+import 'package:election_flutter_app/contract/info_candidate_contract.dart';
 
 class InfoCandidatePresenter implements InfoCandidateContractPresenter {
   InfoCandidateContractView _infoCandidateContractView;
