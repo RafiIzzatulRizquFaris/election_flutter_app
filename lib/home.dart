@@ -1,8 +1,8 @@
 import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:election_flutter_app/info_candidate_contract.dart';
-import 'package:election_flutter_app/info_candidate_presenter.dart';
+import 'package:election_flutter_app/contract/info_candidate_contract.dart';
+import 'package:election_flutter_app/presenter/info_candidate_presenter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
@@ -19,6 +19,8 @@ class HomeScreen extends State<Home>
   InfoCandidatePresenter infoCandidatePresenter;
   List<DocumentSnapshot> infoCandidateList = List<DocumentSnapshot>();
   int index = 0;
+  String chosenId = "1";
+  bool showDesc = false;
 
 //  CardController cardController;
   var isLoading;
@@ -66,7 +68,12 @@ class HomeScreen extends State<Home>
                         child: Row(
                           children: [
                             Padding(
-                              padding: EdgeInsets.only(top: 16, left: 10, bottom: 16, right: 10,  ),
+                              padding: EdgeInsets.only(
+                                top: 16,
+                                left: 10,
+                                bottom: 16,
+                                right: 10,
+                              ),
                               child: RotatedBox(
                                 quarterTurns: -1,
                                 child: Text(
@@ -80,10 +87,10 @@ class HomeScreen extends State<Home>
                             ),
                             Expanded(
                               child: Text(
-                                "Pilihanmu menentukan masa depan sekolahmu",
+                                "Pilihanmu menentukan\nmasa depan sekolahmu",
                                 style: TextStyle(
                                   color: Colors.white,
-                                  fontSize: 20,
+                                  fontSize: 24,
                                 ),
                               ),
                             ),
@@ -100,8 +107,8 @@ class HomeScreen extends State<Home>
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(30),
-                              topRight: Radius.circular(30),
+                              topLeft: Radius.circular(20),
+                              topRight: Radius.circular(20),
                             ),
                           ),
                           child: Column(
@@ -123,13 +130,12 @@ class HomeScreen extends State<Home>
                                   left: 16,
                                   right: 16,
                                 ),
-//                                padding: EdgeInsets.only(top: 6, bottom: 6,),
                                 width: MediaQuery.of(context).size.width,
                                 child: RaisedButton(
                                   onPressed: () {},
                                   elevation: 8,
                                   shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(15),
+                                    borderRadius: BorderRadius.circular(10),
                                   ),
                                   hoverColor: Colors.blue,
                                   focusColor: Colors.blue,
@@ -142,7 +148,7 @@ class HomeScreen extends State<Home>
                                       bottom: 10,
                                     ),
                                     child: Text(
-                                      "Button",
+                                      "Pilih Nomor $chosenId",
                                       style: TextStyle(
                                         fontSize: 20,
                                       ),
@@ -166,54 +172,85 @@ class HomeScreen extends State<Home>
     return Transform.scale(
       scale: i == index ? 1 : 0.9,
       child: Card(
-        shadowColor: Colors.black26,
-        elevation: 8,
+        shadowColor: Colors.black.withOpacity(0.5),
+        elevation: 10,
         color: Colors.blueAccent,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(30),
+          borderRadius: BorderRadius.circular(20),
         ),
-        child: Column(
+        child: Stack(
           children: [
-            Expanded(
-              child: Padding(
-                padding: EdgeInsets.all(10),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.all(Radius.circular(30)),
-                  child: Image.network(
-                    infoCandidateList[i].data["candidate_photo"],
-                    fit: BoxFit.fitWidth,
+            Column(
+              children: [
+                Expanded(
+                  child: SizedBox.expand(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.all(Radius.circular(20)),
+                      child: FittedBox(
+                        child: Image.network(
+                          infoCandidateList[i].data["candidate_photo"],
+//                        fit: BoxFit.cover,
+                        ),
+                        fit: BoxFit.fill,
+                      ),
+                    ),
                   ),
                 ),
-              ),
+              ],
             ),
-            Padding(
-              padding: EdgeInsets.all(10),
-              child: Text(
-                "Deva Abel Khan (XII RPL 1)",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
+            Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Container(
+                  width: MediaQuery.of(context).size.width,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                    color: Colors.blueAccent,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.5),
+                        spreadRadius: 0,
+                        blurRadius: 10,
+                        offset: Offset(0, -20), // changes position of shadow
+                      ),
+                    ],
+                  ),
+                  child: FlatButton(
+                    splashColor: Colors.amberAccent,
+                    onPressed: onClickDesc,
+                    child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(20)),
+                        color: Colors.blueAccent,
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.all(10),
+                            child: Text(
+                              infoCandidateList[i].data["candidate_name"],
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                              ),
+                              textAlign: TextAlign.start,
+                            ),
+                          ),
+                          Padding(
+                            padding: showDesc
+                                ? EdgeInsets.all(10)
+                                : EdgeInsets.all(0),
+                            child: showDesc ? expandedDesc(i) : null,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
-                textAlign: TextAlign.start,
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(
-                top: 10,
-                left: 10,
-                bottom: 16,
-                right: 10,
-              ),
-              child: Text(
-                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.normal,
-                  fontSize: 16,
-                ),
-                textAlign: TextAlign.start,
-              ),
+              ],
             ),
           ],
         ),
@@ -239,8 +276,33 @@ class HomeScreen extends State<Home>
   void pageViewOnChange(int value) {
     setState(() {
       index = value;
+      chosenId = infoCandidateList[value].data["candidate_id"];
     });
-    print(index);
+    print(chosenId);
+  }
+
+  void onClickDesc() {
+    if (!showDesc) {
+      setState(() {
+        showDesc = true;
+      });
+    } else {
+      setState(() {
+        showDesc = false;
+      });
+    }
+  }
+
+  expandedDesc(int i) {
+    return Text(
+      infoCandidateList[i].data["candidate_name"],
+      style: TextStyle(
+        color: Colors.white,
+        fontWeight: FontWeight.normal,
+        fontSize: 16,
+      ),
+      textAlign: TextAlign.start,
+    );
   }
 }
 
