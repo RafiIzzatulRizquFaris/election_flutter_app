@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:election_flutter_app/app_color.dart';
 import 'package:election_flutter_app/contract/info_candidate_contract.dart';
 import 'package:election_flutter_app/presenter/info_candidate_presenter.dart';
 import 'package:flutter/material.dart';
@@ -52,12 +53,12 @@ class HomeScreen extends State<Home>
         ),
         child: infoCandidateList == null
             ? CircularProgressIndicator(
-                backgroundColor: Colors.blueAccent,
+                backgroundColor: AppColor().blueColor,
               )
             : Container(
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height,
-                color: Colors.blue,
+                color: AppColor().blueColor,
                 child: SafeArea(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,

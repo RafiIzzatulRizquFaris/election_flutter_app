@@ -1,5 +1,5 @@
+import 'package:election_flutter_app/app_color.dart';
 import 'package:election_flutter_app/countdown.dart';
-import 'package:election_flutter_app/home.dart';
 import 'package:election_flutter_app/contract/login_contract.dart';
 import 'package:election_flutter_app/presenter/login_presenter.dart';
 import 'package:election_flutter_app/post.dart';
@@ -39,7 +39,7 @@ class LoginScreen extends State<Login> implements LoginContractView {
           gradient: LinearGradient(
             begin: Alignment.topRight,
             end: Alignment.bottomLeft,
-            colors: [Colors.blue, Colors.lightBlueAccent,],
+            colors: [AppColor().blueColor, Color(0xff524CFF),],
           ),
         ),
         child: isLoading
@@ -188,13 +188,6 @@ class LoginScreen extends State<Login> implements LoginContractView {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.all(Radius.circular(30)),
-          boxShadow: [
-            BoxShadow(
-                color: Colors.blue[300],
-                blurRadius: 10,
-                spreadRadius: 1,
-                offset: Offset(5, 5)),
-          ],
         ),
         child: FlatButton(
           onPressed: () {
@@ -215,8 +208,8 @@ class LoginScreen extends State<Login> implements LoginContractView {
               Text(
                 "Sign In",
                 style: TextStyle(
-                  color: Colors.lightBlueAccent,
-                  fontSize: 14,
+                  color: AppColor().blueColor,
+                  fontSize: 16,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -225,7 +218,7 @@ class LoginScreen extends State<Login> implements LoginContractView {
               ),
               Icon(
                 Icons.arrow_forward_ios,
-                color: Colors.lightBlueAccent,
+                color: AppColor().blueColor,
               ),
             ],
           ),

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:election_flutter_app/countdown.dart';
 import 'package:election_flutter_app/home.dart';
 import 'package:election_flutter_app/launcher.dart';
 import 'package:election_flutter_app/post.dart';
@@ -37,11 +38,11 @@ class MyApp extends StatelessWidget {
                 builder: (context, snapshot) {
                   print(snapshot.data);
                   if(snapshot.data == false){
-                    return Home();
+                    return Countdown();
                   }else if(snapshot.data == true){
                     return Post();
                   }else{
-                    return Home();
+                    return Countdown();
                   }
                 },
               ),
