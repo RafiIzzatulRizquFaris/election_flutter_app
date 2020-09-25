@@ -5,6 +5,7 @@ import 'package:election_flutter_app/presenter/login_presenter.dart';
 import 'package:election_flutter_app/post.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sweetalert/sweetalert.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -39,11 +40,18 @@ class LoginScreen extends State<Login> implements LoginContractView {
           gradient: LinearGradient(
             begin: Alignment.topRight,
             end: Alignment.bottomLeft,
-            colors: [AppColor().blueColor, Color(0xff524CFF),],
+            colors: [
+              AppColor().blueColor,
+              Color(0xff524CFF),
+            ],
           ),
         ),
         child: isLoading
-            ? Center(child: CircularProgressIndicator(backgroundColor: Colors.white,),)
+            ? Center(
+                child: CircularProgressIndicator(
+                  backgroundColor: Colors.white,
+                ),
+              )
             : ListView(
                 children: [
                   Column(
@@ -198,8 +206,13 @@ class LoginScreen extends State<Login> implements LoginContractView {
               });
               loginPresenter.loadLoginData(
                   emailController.text.trim(), passwordController.text.trim());
-            }else{
-              print("object is null");
+            } else if (emailController.text.trim().length == 0) {
+              errorAlert("Empty Email", "Please fill email field");
+            } else if (passwordController.text.trim().length == 0) {
+              errorAlert("Empty Password", "Please fill password field");
+            } else if (emailController.text.trim().length == 0 &&
+                passwordController.text.trim().length == 0) {
+              errorAlert("Empty Field", "Make sure you fill all the field required");
             }
           },
           child: Row(
@@ -264,20 +277,29 @@ class LoginScreen extends State<Login> implements LoginContractView {
 
   @override
   setLoginData(List value) async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    await preferences.setString("uid", value[0]);
-    setState(() {
-      isLoading = false;
-    });
-    print(preferences.get("uid"));
-    if (!isLoading && !isError && !value[1]){
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
-        return Countdown();
-      }));
-    }else if (value[1]){
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context){
-        return Post();
-      }));
+    if(value.isEmpty || value.length == 0){
+      setState(() {
+        isLoading = false;
+      });
+      errorAlert("Data not found", "Please contact the admin to ask for account");
+    }else {
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      await preferences.setString("uid", value[0]);
+      setState(() {
+        isLoading = false;
+      });
+      print(preferences.get("uid"));
+      if (!isLoading && !isError && !value[1]) {
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) {
+          return Countdown();
+        }));
+      } else if (value[1]) {
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) {
+          return Post();
+        }));
+      }
     }
   }
 
@@ -285,7 +307,24 @@ class LoginScreen extends State<Login> implements LoginContractView {
   onErrorLogin(String error) {
     setState(() {
       isError = true;
+      isLoading = false;
     });
-    print("Error" + error);
+    errorAlert("Data not found", "Please contact the admin to ask for account");
+  }
+
+  errorAlert(String title, String subtitle) {
+    return SweetAlert.show(context,
+        style: SweetAlertStyle.confirm,
+        title: title,
+        subtitle: subtitle,
+        showCancelButton: false,
+        onPress: (isOk) {
+      if (isOk) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+    );
   }
 }

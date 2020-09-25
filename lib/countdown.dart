@@ -185,7 +185,6 @@ class CountdownScreen extends State<Countdown> {
     setState(() {
       isDone = true;
     });
-    print("Empty Widget");
     return Text("Restart your app to continue vote up", style: TextStyle(color: Colors.white),);
   }
 }
