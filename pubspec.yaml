@@ -17,10 +17,8 @@ dependencies:
   shared_preferences: ^0.5.7+3
   sweetalert: ^0.0.1
   animated_text_kit: ^2.2.0
-  email_validator: ^1.0.4
   flutter_tindercard: ^0.1.7
   flutter_svg: ^0.18.0
-  wave: ^0.0.8
   intl: any
   flutter_countdown_timer: any
   confetti: any
