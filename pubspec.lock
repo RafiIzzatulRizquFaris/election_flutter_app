@@ -174,13 +174,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.2.0"
-  flutter_sequence_animation:
-    dependency: transitive
-    description:
-      name: flutter_sequence_animation
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "3.0.1"
   flutter_svg:
     dependency: "direct main"
     description:
@@ -345,6 +338,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.5"
+  rflutter_alert:
+    dependency: "direct main"
+    description:
+      name: rflutter_alert
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.1.0"
   shared_preferences:
     dependency: "direct main"
     description:
@@ -420,13 +420,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.0-nullsafety"
-  sweetalert:
-    dependency: "direct main"
-    description:
-      name: sweetalert
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.0.1"
   term_glyph:
     dependency: transitive
     description:
