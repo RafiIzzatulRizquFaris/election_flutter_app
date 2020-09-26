@@ -3,9 +3,11 @@ import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:election_flutter_app/app_color.dart';
 import 'package:election_flutter_app/contract/info_candidate_contract.dart';
+import 'package:election_flutter_app/post.dart';
 import 'package:election_flutter_app/presenter/info_candidate_presenter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -41,16 +43,6 @@ class HomeScreen extends State<Home>
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              Colors.white,
-              Colors.white70,
-            ],
-            begin: Alignment.topRight,
-            end: Alignment.bottomLeft,
-          ),
-        ),
         child: infoCandidateList == null
             ? CircularProgressIndicator(
                 backgroundColor: AppColor().blueColor,
@@ -80,7 +72,7 @@ class HomeScreen extends State<Home>
                                 child: Text(
                                   "VOTE",
                                   style: TextStyle(
-                                      color: Colors.white,
+                                      color: AppColor().whiteColor,
                                       fontSize: 38,
                                       fontWeight: FontWeight.w900),
                                 ),
@@ -88,9 +80,9 @@ class HomeScreen extends State<Home>
                             ),
                             Expanded(
                               child: Text(
-                                "Pilihanmu menentukan\nmasa depan sekolahmu",
+                                "Your choices determine\nthe future of your school",
                                 style: TextStyle(
-                                  color: Colors.white,
+                                  color: AppColor().whiteColor,
                                   fontSize: 24,
                                 ),
                               ),
@@ -106,7 +98,7 @@ class HomeScreen extends State<Home>
                           ),
                           width: MediaQuery.of(context).size.width,
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: AppColor().whiteColor,
                             borderRadius: BorderRadius.only(
                               topLeft: Radius.circular(20),
                               topRight: Radius.circular(20),
@@ -133,23 +125,70 @@ class HomeScreen extends State<Home>
                                 ),
                                 width: MediaQuery.of(context).size.width,
                                 child: RaisedButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    Alert(
+                                      context: context,
+                                      title: "Vote",
+                                      desc: "Are you sure you chose candidate number $chosenId?",
+                                      type: AlertType.info,
+                                      buttons: [
+                                        DialogButton(
+                                          onPressed: () => Navigator.pop(context),
+                                          child: Text(
+                                            "Cancel",
+                                            style: TextStyle(color: Colors.white, fontSize: 20),
+                                          ),
+                                          color: Colors.grey,
+                                        ),
+                                        DialogButton(
+                                          onPressed: () {
+                                            return Navigator.of(context).push(MaterialPageRoute(builder: (_){
+                                              return Post();
+                                            }));
+                                          },
+                                          child: Text(
+                                            "Confirm",
+                                            style: TextStyle(color: Colors.white, fontSize: 20),
+                                          ),
+                                        ),
+                                      ],
+                                      style: AlertStyle(
+                                        animationType: AnimationType.fromBottom,
+                                        isCloseButton: false,
+                                        isOverlayTapDismiss: false,
+                                        descStyle: TextStyle(fontWeight: FontWeight.bold),
+                                        descTextAlign: TextAlign.start,
+                                        animationDuration: Duration(milliseconds: 400),
+                                        alertBorder: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(10),
+                                          side: BorderSide(
+                                            color: Colors.grey,
+                                          ),
+                                        ),
+                                        titleStyle: TextStyle(
+                                          color: AppColor().blueColor,
+                                        ),
+                                        alertAlignment: Alignment.center,
+                                      ),
+                                    ).show();
+                                  },
                                   elevation: 8,
                                   shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10),
+                                    borderRadius: BorderRadius.circular(20),
                                   ),
                                   hoverColor: Colors.blue,
                                   focusColor: Colors.blue,
-                                  splashColor: Colors.amberAccent,
-                                  color: Colors.blueAccent,
-                                  textColor: Colors.white,
+                                  splashColor: Colors.blue,
+                                  color: AppColor().blueColor,
+                                  padding: EdgeInsets.all(5),
+                                  textColor: AppColor().whiteColor,
                                   child: Padding(
                                     padding: EdgeInsets.only(
                                       top: 10,
                                       bottom: 10,
                                     ),
                                     child: Text(
-                                      "Pilih Nomor $chosenId",
+                                      "Vote candidate number $chosenId",
                                       style: TextStyle(
                                         fontSize: 20,
                                       ),
@@ -175,7 +214,7 @@ class HomeScreen extends State<Home>
       child: Card(
         shadowColor: Colors.black.withOpacity(0.5),
         elevation: 10,
-        color: Colors.blueAccent,
+        color: AppColor().blueColor,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
         ),
@@ -190,6 +229,7 @@ class HomeScreen extends State<Home>
                       child: FittedBox(
                         child: Image.network(
                           infoCandidateList[i].data["candidate_photo"],
+                          loadingBuilder: loadingBuilderCandidate,
 //                        fit: BoxFit.cover,
                         ),
                         fit: BoxFit.fill,
@@ -206,7 +246,7 @@ class HomeScreen extends State<Home>
                   width: MediaQuery.of(context).size.width,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.all(Radius.circular(20)),
-                    color: Colors.blueAccent,
+                    color: AppColor().blueColor,
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withOpacity(0.5),
@@ -223,7 +263,7 @@ class HomeScreen extends State<Home>
                       width: MediaQuery.of(context).size.width,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.all(Radius.circular(20)),
-                        color: Colors.blueAccent,
+                        color: AppColor().blueColor,
                       ),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
@@ -233,7 +273,7 @@ class HomeScreen extends State<Home>
                             child: Text(
                               infoCandidateList[i].data["candidate_name"],
                               style: TextStyle(
-                                color: Colors.white,
+                                color: AppColor().whiteColor,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 20,
                               ),
@@ -298,11 +338,26 @@ class HomeScreen extends State<Home>
     return Text(
       infoCandidateList[i].data["candidate_name"],
       style: TextStyle(
-        color: Colors.white,
+        color: AppColor().whiteColor,
         fontWeight: FontWeight.normal,
         fontSize: 16,
       ),
       textAlign: TextAlign.start,
+    );
+  }
+
+  Widget loadingBuilderCandidate(
+      BuildContext context, Widget child, ImageChunkEvent loadingProgress) {
+    if (loadingProgress == null) return child;
+    return Center(
+      child: CircularProgressIndicator(
+        strokeWidth: 1,
+        valueColor: AlwaysStoppedAnimation(AppColor().whiteColor),
+        value: loadingProgress.expectedTotalBytes != null
+            ? loadingProgress.cumulativeBytesLoaded /
+                loadingProgress.expectedTotalBytes
+            : null,
+      ),
     );
   }
 }
