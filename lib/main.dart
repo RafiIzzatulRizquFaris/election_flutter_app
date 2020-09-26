@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:election_flutter_app/countdown.dart';
-import 'package:election_flutter_app/home.dart';
 import 'package:election_flutter_app/launcher.dart';
 import 'package:election_flutter_app/post.dart';
 import 'package:flutter/material.dart';
