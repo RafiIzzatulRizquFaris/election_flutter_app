@@ -4,8 +4,8 @@ import 'package:election_flutter_app/contract/login_contract.dart';
 import 'package:election_flutter_app/presenter/login_presenter.dart';
 import 'package:election_flutter_app/post.dart';
 import 'package:flutter/material.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sweetalert/sweetalert.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -212,7 +212,8 @@ class LoginScreen extends State<Login> implements LoginContractView {
               errorAlert("Empty Password", "Please fill password field");
             } else if (emailController.text.trim().length == 0 &&
                 passwordController.text.trim().length == 0) {
-              errorAlert("Empty Field", "Make sure you fill all the field required");
+              errorAlert(
+                  "Empty Field", "Make sure you fill all the field required");
             }
           },
           child: Row(
@@ -277,12 +278,13 @@ class LoginScreen extends State<Login> implements LoginContractView {
 
   @override
   setLoginData(List value) async {
-    if(value.isEmpty || value.length == 0){
+    if (value.isEmpty || value.length == 0) {
       setState(() {
         isLoading = false;
       });
-      errorAlert("Data not found", "Please contact the admin to ask for account");
-    }else {
+      errorAlert(
+          "Data not found", "Please contact the admin to ask for account");
+    } else {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       await preferences.setString("uid", value[0]);
       setState(() {
@@ -290,13 +292,13 @@ class LoginScreen extends State<Login> implements LoginContractView {
       });
       print(preferences.get("uid"));
       if (!isLoading && !isError && !value[1]) {
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) {
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) {
           return Countdown();
         }));
       } else if (value[1]) {
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) {
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) {
           return Post();
         }));
       }
@@ -313,18 +315,38 @@ class LoginScreen extends State<Login> implements LoginContractView {
   }
 
   errorAlert(String title, String subtitle) {
-    return SweetAlert.show(context,
-        style: SweetAlertStyle.confirm,
-        title: title,
-        subtitle: subtitle,
-        showCancelButton: false,
-        onPress: (isOk) {
-      if (isOk) {
-        return true;
-      } else {
-        return false;
-      }
-    }
-    );
+    return Alert(
+      context: context,
+      title: title,
+      desc: subtitle,
+      type: AlertType.warning,
+      buttons: [
+        DialogButton(
+          onPressed: () => Navigator.pop(context),
+          child: Text(
+            "OK",
+            style: TextStyle(color: Colors.white, fontSize: 20),
+          ),
+        ),
+      ],
+      style: AlertStyle(
+        animationType: AnimationType.grow,
+        isCloseButton: false,
+        isOverlayTapDismiss: false,
+        descStyle: TextStyle(fontWeight: FontWeight.bold),
+        descTextAlign: TextAlign.start,
+        animationDuration: Duration(milliseconds: 400),
+        alertBorder: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+          side: BorderSide(
+            color: Colors.grey,
+          ),
+        ),
+        titleStyle: TextStyle(
+          color: Colors.red,
+        ),
+        alertAlignment: Alignment.center,
+      ),
+    ).show();
   }
 }
