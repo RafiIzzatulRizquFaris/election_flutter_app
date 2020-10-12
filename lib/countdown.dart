@@ -14,15 +14,15 @@ class Countdown extends StatefulWidget {
 
 class CountdownScreen extends State<Countdown> {
   int estimateTs = DateTime(2020, 9, 23, 9, 28, 00).millisecondsSinceEpoch;
-  bool isDone;
+  var isDone;
   ConfettiController _controllerCenter;
 
   @override
   void initState() {
     super.initState();
-    isDone = false;
     _controllerCenter =
         ConfettiController(duration: const Duration(seconds: 10));
+    isDone = false;
   }
 
   @override
@@ -172,7 +172,8 @@ class CountdownScreen extends State<Countdown> {
                 textColor: AppColor().blueColor,
                 padding: EdgeInsets.all(15),
                 shape: RoundedRectangleBorder(
-                    borderRadius: new BorderRadius.circular(30)),
+                  borderRadius: BorderRadius.circular(30),
+                ),
               ),
             ),
           ],
@@ -182,9 +183,35 @@ class CountdownScreen extends State<Countdown> {
   }
 
   emptyWidget() {
-    setState(() {
-      isDone = true;
-    });
-    return Text("Restart your app to continue vote up", style: TextStyle(color: Colors.white),);
+    // SchedulerBinding.instance.addPostFrameCallback((_) {
+    //   Navigator.push(context, MaterialPageRoute(builder: (context) => Home()));
+    // });
+    return OutlineButton(
+      borderSide: BorderSide(
+        width: 2,
+        color: AppColor().whiteColor,
+      ),
+      color: AppColor().blueColor,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(
+          Radius.circular(15),
+        ),
+      ),
+      padding: EdgeInsets.all(15),
+      splashColor: AppColor().whiteColor,
+      highlightColor: AppColor().whiteColor,
+      child: Text(
+        "Tap to Start",
+        style: TextStyle(
+          color: AppColor().whiteColor,
+          fontSize: 20,
+        ),
+      ),
+      onPressed: () {
+        setState(() {
+          isDone = true;
+        });
+      },
+    );
   }
 }
