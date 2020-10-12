@@ -1,6 +1,7 @@
 import 'package:election_flutter_app/app_color.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 class Post extends StatefulWidget {
   @override
@@ -43,6 +44,74 @@ class PostScreen extends State<Post> {
               ),
               textAlign: TextAlign.center,
             ),
+            Padding(
+              padding: EdgeInsets.all(20),
+              child: OutlineButton(
+                borderSide: BorderSide(
+                  width: 2,
+                  color: AppColor().whiteColor,
+                ),
+                color: AppColor().blueColor,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(15),
+                  ),
+                ),
+                padding: EdgeInsets.all(15),
+                splashColor: AppColor().whiteColor,
+                highlightColor: AppColor().whiteColor,
+                child: Text(
+                  "Logout",
+                  style: TextStyle(
+                    color: AppColor().whiteColor,
+                    fontSize: 20,
+                  ),
+                ),
+                onPressed: () {
+                  Alert(
+                    context: context,
+                    title: "Logout",
+                    desc: "Are you sure to logout?",
+                    type: AlertType.info,
+                    buttons: [
+                      DialogButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: Text(
+                          "Cancel",
+                          style: TextStyle(color: Colors.white, fontSize: 20),
+                        ),
+                        color: Colors.grey,
+                      ),
+                      DialogButton(
+                        onPressed: () {},
+                        child: Text(
+                          "Confirm",
+                          style: TextStyle(color: Colors.white, fontSize: 20),
+                        ),
+                      ),
+                    ],
+                    style: AlertStyle(
+                      animationType: AnimationType.grow,
+                      isCloseButton: false,
+                      isOverlayTapDismiss: false,
+                      descStyle: TextStyle(fontWeight: FontWeight.bold),
+                      descTextAlign: TextAlign.start,
+                      animationDuration: Duration(milliseconds: 400),
+                      alertBorder: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        side: BorderSide(
+                          color: Colors.grey,
+                        ),
+                      ),
+                      titleStyle: TextStyle(
+                        color: AppColor().blueColor,
+                      ),
+                      alertAlignment: Alignment.center,
+                    ),
+                  ).show();
+                },
+              ),
+            )
           ],
         ),
       ),
