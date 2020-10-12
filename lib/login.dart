@@ -1,6 +1,7 @@
 import 'package:election_flutter_app/app_color.dart';
 import 'package:election_flutter_app/countdown.dart';
 import 'package:election_flutter_app/contract/login_contract.dart';
+import 'package:election_flutter_app/model/Login.dart' as LoginModel;
 import 'package:election_flutter_app/presenter/login_presenter.dart';
 import 'package:election_flutter_app/post.dart';
 import 'package:flutter/material.dart';
@@ -128,7 +129,7 @@ class LoginScreen extends State<Login> implements LoginContractView {
           decoration: InputDecoration(
             border: InputBorder.none,
             fillColor: Colors.lightBlueAccent,
-            labelText: "Email",
+            labelText: "Username",
             labelStyle: TextStyle(
               color: Colors.white70,
             ),
@@ -203,6 +204,7 @@ class LoginScreen extends State<Login> implements LoginContractView {
                 passwordController.text.trim().length > 0) {
               setState(() {
                 isLoading = true;
+                isError = false;
               });
               loginPresenter.loadLoginData(
                   emailController.text.trim(), passwordController.text.trim());
@@ -277,41 +279,89 @@ class LoginScreen extends State<Login> implements LoginContractView {
   }
 
   @override
-  setLoginData(List value) async {
-    if (value.isEmpty || value.length == 0) {
+  setLoginData(LoginModel.Login loginData) async {
+    if (loginData == null) {
       setState(() {
+        isError = true;
         isLoading = false;
       });
-      errorAlert(
-          "Data not found", "Please contact the admin to ask for account");
+      errorAlert("Data not found", "Check your connection");
     } else {
-      SharedPreferences preferences = await SharedPreferences.getInstance();
-      await preferences.setString("uid", value[0]);
-      setState(() {
-        isLoading = false;
-      });
-      print(preferences.get("uid"));
-      if (!isLoading && !isError && !value[1]) {
-        Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (context) {
-          return Countdown();
-        }));
-      } else if (value[1]) {
-        Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (context) {
-          return Post();
-        }));
+      if (loginData.status == 'success') {
+        SharedPreferences preferences = await SharedPreferences.getInstance();
+        await preferences.setString("nik", loginData.data[0].nik_voter);
+        await preferences.setString("password", loginData.data[0].password_voter);
+        setState(() {
+          isLoading = false;
+        });
+        if (!isLoading && !isError && loginData.data[0].ischosen == '0') {
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (context) {
+            return Countdown();
+          }));
+        } else if (!isLoading && !isError && loginData.data[0].ischosen == '1') {
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (context) {
+            return Post();
+          }));
+        }
+      } else if (loginData.status == 'failed') {
+        if (loginData.message == 'You are already log in on other device') {
+          setState(() {
+            isError = true;
+            isLoading = false;
+          });
+          errorAlert("Failed", "You are already log in on other device");
+        } else if (loginData.message ==
+            'Please contact the admin to ask for account') {
+          setState(() {
+            isError = true;
+            isLoading = false;
+          });
+          errorAlert("Failed", "Please contact the admin to ask for account");
+        } else if (loginData.message == 'Access denied') {
+          setState(() {
+            isError = true;
+            isLoading = false;
+          });
+          errorAlert("Failed", "Access denied");
+        }
       }
     }
+    // if (value.isEmpty || value.length == 0) {
+    //   setState(() {
+    //     isLoading = false;
+    //   });
+    //   errorAlert(
+    //       "Data not found", "Please contact the admin to ask for account");
+    // } else {
+    //   SharedPreferences preferences = await SharedPreferences.getInstance();
+    //   await preferences.setString("uid", value[0]);
+    //   setState(() {
+    //     isLoading = false;
+    //   });
+    //   if (!isLoading && !isError && !value[1]) {
+    //     Navigator.pushReplacement(context,
+    //         MaterialPageRoute(builder: (context) {
+    //       return Countdown();
+    //     }));
+    //   } else if (value[1]) {
+    //     Navigator.pushReplacement(context,
+    //         MaterialPageRoute(builder: (context) {
+    //       return Post();
+    //     }));
+    //   }
+    // }
   }
 
   @override
-  onErrorLogin(String error) {
+  onErrorLogin(error) {
     setState(() {
       isError = true;
       isLoading = false;
     });
-    errorAlert("Data not found", "Please contact the admin to ask for account");
+    print(error);
+    errorAlert("Data not found", "Check your connection");
   }
 
   errorAlert(String title, String subtitle) {
