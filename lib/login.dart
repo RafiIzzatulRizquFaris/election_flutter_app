@@ -291,6 +291,7 @@ class LoginScreen extends State<Login> implements LoginContractView {
         SharedPreferences preferences = await SharedPreferences.getInstance();
         await preferences.setString("nik", loginData.data[0].nik_voter);
         await preferences.setString("password", loginData.data[0].password_voter);
+        await preferences.setString("id", loginData.data[0].id_voter);
         setState(() {
           isLoading = false;
         });
