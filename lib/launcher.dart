@@ -74,7 +74,7 @@ class LauncherScreen extends State<Launcher> implements CheckViewContract {
               children: [
                 RotateAnimatedTextKit(
                   text: ["Select Your", "Future Leader"],
-                  totalRepeatCount: 4,
+                  totalRepeatCount: 5,
                   pause: Duration(seconds: 1),
                   displayFullTextOnTap: true,
                   textStyle: TextStyle(
