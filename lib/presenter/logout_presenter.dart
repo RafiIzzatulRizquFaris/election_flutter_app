@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:election_flutter_app/constants.dart';
 import 'package:election_flutter_app/contract/logout_contract.dart';
 import 'package:election_flutter_app/model/Logout.dart';
 import 'package:http/http.dart';
@@ -11,7 +12,7 @@ class LogoutPresenter implements LogoutContractPresenter {
 
   @override
   Future<Logout> getLogoutData(String nik, String password) async {
-    String url = "https://apiosis.000webhostapp.com/olection/api/Logout";
+    String url = "${UrlConst().domain}Logout";
     Client client = Client();
     var response = await client.post(
       url,

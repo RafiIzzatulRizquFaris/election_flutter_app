@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:election_flutter_app/constants.dart';
 import 'package:election_flutter_app/contract/login_contract.dart';
 import 'package:election_flutter_app/model/Login.dart';
 import 'package:http/http.dart';
@@ -18,7 +19,7 @@ class LoginPresenter implements LoginContractPresenter {
 
   @override
   Future<Login> getLoginData(String email, String password) async {
-    final url = "https://apiosis.000webhostapp.com/olection/api/Login";
+    final url = "${UrlConst().domain}Login";
     Map<String, String> body = {
       "nik" : email,
       "password" : password,

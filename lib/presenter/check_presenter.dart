@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:election_flutter_app/constants.dart';
 import 'package:election_flutter_app/contract/check_contract.dart';
 import 'package:election_flutter_app/model/Check.dart';
 import 'package:http/http.dart';
@@ -11,7 +12,7 @@ class CheckPresenter implements CheckPresenterContract{
 
   @override
   Future<Check> getCheckData(String nik, String password) async{
-    final url = "https://apiosis.000webhostapp.com/olection/api/Check";
+    final url = "${UrlConst().domain}Check";
     Map<String, String> body = {
       "nik" : nik,
       "password" : password,
