@@ -1,5 +1,5 @@
 import 'package:confetti/confetti.dart';
-import 'package:election_flutter_app/app_color.dart';
+import 'package:election_flutter_app/constants.dart';
 import 'package:election_flutter_app/home.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

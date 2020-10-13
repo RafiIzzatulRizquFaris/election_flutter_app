@@ -1,4 +1,4 @@
-import 'package:election_flutter_app/app_color.dart';
+import 'package:election_flutter_app/constants.dart';
 import 'package:election_flutter_app/countdown.dart';
 import 'package:election_flutter_app/contract/login_contract.dart';
 import 'package:election_flutter_app/model/Login.dart' as LoginModel;

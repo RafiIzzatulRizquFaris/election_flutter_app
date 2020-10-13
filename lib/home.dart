@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:election_flutter_app/app_color.dart';
+import 'package:election_flutter_app/constants.dart';
 import 'package:election_flutter_app/contract/info_candidate_contract.dart';
 import 'package:election_flutter_app/contract/vote_contract.dart';
 import 'package:election_flutter_app/model/Vote.dart';

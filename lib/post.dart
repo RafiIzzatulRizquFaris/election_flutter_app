@@ -1,4 +1,4 @@
-import 'package:election_flutter_app/app_color.dart';
+import 'package:election_flutter_app/constants.dart';
 import 'package:election_flutter_app/contract/logout_contract.dart';
 import 'package:election_flutter_app/login.dart';
 import 'package:election_flutter_app/model/Logout.dart';

@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:animated_text_kit/animated_text_kit.dart';
-import 'package:election_flutter_app/app_color.dart';
+import 'package:election_flutter_app/constants.dart';
 import 'package:election_flutter_app/contract/check_contract.dart';
 import 'package:election_flutter_app/countdown.dart';
 import 'package:election_flutter_app/login.dart';
