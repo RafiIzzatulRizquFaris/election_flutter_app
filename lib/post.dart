@@ -1,7 +1,12 @@
 import 'package:election_flutter_app/app_color.dart';
+import 'package:election_flutter_app/contract/logout_contract.dart';
+import 'package:election_flutter_app/login.dart';
+import 'package:election_flutter_app/model/Logout.dart';
+import 'package:election_flutter_app/presenter/logout_presenter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Post extends StatefulWidget {
   @override
@@ -10,13 +15,29 @@ class Post extends StatefulWidget {
   }
 }
 
-class PostScreen extends State<Post> {
+class PostScreen extends State<Post> implements LogoutContractView {
+
+  LogoutPresenter logoutPresenter;
+  SharedPreferences preferences;
+  var isLoading;
+
+  PostScreen() {
+    logoutPresenter = LogoutPresenter(this);
+  }
+
+
+  @override
+  void initState() {
+    super.initState();
+    isLoading = false;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColor().blueColor,
       body: Center(
-        child: Column(
+        child: isLoading ? CircularProgressIndicator(backgroundColor: Colors.white,) : Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset(
@@ -83,7 +104,14 @@ class PostScreen extends State<Post> {
                         color: Colors.grey,
                       ),
                       DialogButton(
-                        onPressed: () {},
+                        onPressed: () async {
+                          setState(() {
+                            isLoading = true;
+                          });
+                          preferences = await SharedPreferences.getInstance();
+                          logoutPresenter.loadLogoutData(preferences.get("nik").toString(), preferences.get("password").toString());
+                          Navigator.pop(context);
+                        },
                         child: Text(
                           "Confirm",
                           style: TextStyle(color: Colors.white, fontSize: 20),
@@ -117,4 +145,75 @@ class PostScreen extends State<Post> {
       ),
     );
   }
+
+  @override
+  setLogoutData(Logout logout) async {
+    if (logout != null){
+      if (logout.status == "success"){
+        await preferences.clear();
+        setState(() {
+          isLoading = false;
+        });
+        return Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => Login()));
+      } else {
+        setState(() {
+          isLoading = false;
+        });
+        errorAlert("Failed", "Check your connection");
+      }
+    } else {
+      setState(() {
+        isLoading = false;
+      });
+      errorAlert("Failed", "Check your connection");
+    }
+  }
+
+  @override
+  setOnErrorLogout(error) {
+    print(error.toString());
+    setState(() {
+      isLoading = false;
+    });
+    errorAlert("Failed", "Check your connection");
+  }
+
+  errorAlert(title, subtitle){
+    return Alert(
+      context: context,
+      title: title.toString(),
+      desc: subtitle.toString(),
+      type: AlertType.warning,
+      buttons: [
+        DialogButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: Text(
+            "OK",
+            style: TextStyle(color: Colors.white, fontSize: 20),
+          ),
+        ),
+      ],
+      style: AlertStyle(
+        animationType: AnimationType.grow,
+        isCloseButton: false,
+        isOverlayTapDismiss: false,
+        descStyle: TextStyle(fontWeight: FontWeight.bold),
+        descTextAlign: TextAlign.start,
+        animationDuration: Duration(milliseconds: 400),
+        alertBorder: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+          side: BorderSide(
+            color: Colors.grey,
+          ),
+        ),
+        titleStyle: TextStyle(
+          color: Colors.red,
+        ),
+        alertAlignment: Alignment.center,
+      ),
+    ).show();
+  }
+
 }
