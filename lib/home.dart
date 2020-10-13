@@ -3,8 +3,11 @@ import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:election_flutter_app/app_color.dart';
 import 'package:election_flutter_app/contract/info_candidate_contract.dart';
+import 'package:election_flutter_app/contract/vote_contract.dart';
+import 'package:election_flutter_app/model/Vote.dart';
 import 'package:election_flutter_app/post.dart';
 import 'package:election_flutter_app/presenter/info_candidate_presenter.dart';
+import 'package:election_flutter_app/presenter/vote_presenter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
@@ -18,18 +21,19 @@ class Home extends StatefulWidget {
 
 class HomeScreen extends State<Home>
     with TickerProviderStateMixin
-    implements InfoCandidateContractView {
+    implements InfoCandidateContractView, VoteContractView {
   InfoCandidatePresenter infoCandidatePresenter;
+  VotePresenter votePresenter;
   List<DocumentSnapshot> infoCandidateList = List<DocumentSnapshot>();
   int index = 0;
   String chosenId = "1";
   bool showDesc = false;
-
-//  CardController cardController;
+  var isPostVote;
   var isLoading;
 
   HomeScreen() {
     infoCandidatePresenter = InfoCandidatePresenter(this);
+    votePresenter = VotePresenter(this);
   }
 
   @override
@@ -37,15 +41,19 @@ class HomeScreen extends State<Home>
     super.initState();
     infoCandidatePresenter.loadData();
     isLoading = true;
+    isPostVote = false;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        child: infoCandidateList == null
-            ? CircularProgressIndicator(
-                backgroundColor: AppColor().blueColor,
+        color: AppColor().blueColor,
+        child: isPostVote
+            ? Center(
+                child: CircularProgressIndicator(
+                  backgroundColor: AppColor().blueColor,
+                ),
               )
             : Container(
                 width: MediaQuery.of(context).size.width,
@@ -129,26 +137,32 @@ class HomeScreen extends State<Home>
                                     Alert(
                                       context: context,
                                       title: "Vote",
-                                      desc: "Are you sure you chose candidate number $chosenId?",
+                                      desc:
+                                          "Are you sure you chose candidate number $chosenId?",
                                       type: AlertType.info,
                                       buttons: [
                                         DialogButton(
-                                          onPressed: () => Navigator.pop(context),
+                                          onPressed: () =>
+                                              Navigator.pop(context),
                                           child: Text(
                                             "Cancel",
-                                            style: TextStyle(color: Colors.white, fontSize: 20),
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 20),
                                           ),
                                           color: Colors.grey,
                                         ),
                                         DialogButton(
                                           onPressed: () {
-                                            return Navigator.of(context).push(MaterialPageRoute(builder: (_){
-                                              return Post();
-                                            }));
+                                            setPostVote(true);
+                                            votePresenter.loadVoteData(chosenId);
+                                            Navigator.pop(context);
                                           },
                                           child: Text(
                                             "Confirm",
-                                            style: TextStyle(color: Colors.white, fontSize: 20),
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 20),
                                           ),
                                         ),
                                       ],
@@ -156,11 +170,14 @@ class HomeScreen extends State<Home>
                                         animationType: AnimationType.fromBottom,
                                         isCloseButton: false,
                                         isOverlayTapDismiss: false,
-                                        descStyle: TextStyle(fontWeight: FontWeight.bold),
+                                        descStyle: TextStyle(
+                                            fontWeight: FontWeight.bold),
                                         descTextAlign: TextAlign.start,
-                                        animationDuration: Duration(milliseconds: 400),
+                                        animationDuration:
+                                            Duration(milliseconds: 400),
                                         alertBorder: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(10),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
                                           side: BorderSide(
                                             color: Colors.grey,
                                           ),
@@ -301,12 +318,10 @@ class HomeScreen extends State<Home>
 
   @override
   setInfoCandidate(List<DocumentSnapshot> value) {
-    print(value[0].data["candidate_name"]);
     setState(() {
       infoCandidateList = value;
       isLoading = false;
     });
-    print(infoCandidateList[0].data["candidate_photo"]);
   }
 
   @override
@@ -359,6 +374,85 @@ class HomeScreen extends State<Home>
             : null,
       ),
     );
+  }
+
+  @override
+  onErrorVote(error) {
+    setPostVote(false);
+    print(error.toString());
+    errorAlert("Failed", "Access Denied", "denied");
+  }
+
+  @override
+  setVoteData(Vote vote) {
+    print(vote.status);
+    if (vote != null) {
+      if (vote.status == "success") {
+        setPostVote(false);
+        return Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) {
+          return Post();
+        }));
+      } else if (vote.status == "failed"){
+        setPostVote(false);
+        errorAlert("Failed", "User already choosing", "already");
+      }
+    } else {
+      setPostVote(false);
+      errorAlert("Failed", "Check your internet connection", "connection");
+    }
+  }
+
+  setPostVote(bool b){
+    setState(() {
+      isPostVote = b;
+    });
+  }
+
+  errorAlert(title, subtitle, condition){
+    return Alert(
+      context: context,
+      title: title.toString(),
+      desc: subtitle.toString(),
+      type: AlertType.warning,
+      buttons: [
+        DialogButton(
+          onPressed: () {
+            if (condition.toString() == "connection"){
+              Navigator.pop(context);
+            } else if (condition.toString() == "denied"){
+              print("logout");
+              Navigator.pop(context);
+            } else if (condition.toString() == "already"){
+              Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) {
+                return Post();
+              }));
+            }
+          },
+          child: Text(
+            "OK",
+            style: TextStyle(color: Colors.white, fontSize: 20),
+          ),
+        ),
+      ],
+      style: AlertStyle(
+        animationType: AnimationType.grow,
+        isCloseButton: false,
+        isOverlayTapDismiss: false,
+        descStyle: TextStyle(fontWeight: FontWeight.bold),
+        descTextAlign: TextAlign.start,
+        animationDuration: Duration(milliseconds: 400),
+        alertBorder: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+          side: BorderSide(
+            color: Colors.grey,
+          ),
+        ),
+        titleStyle: TextStyle(
+          color: Colors.red,
+        ),
+        alertAlignment: Alignment.center,
+      ),
+    ).show(); 
   }
 }
 
