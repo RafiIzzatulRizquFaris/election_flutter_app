@@ -3,7 +3,7 @@ import 'package:election_flutter_app/constants.dart';
 import 'package:election_flutter_app/home.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_countdown_timer/countdown_timer.dart';
+import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 
 class Countdown extends StatefulWidget {
   @override
@@ -13,7 +13,7 @@ class Countdown extends StatefulWidget {
 }
 
 class CountdownScreen extends State<Countdown> {
-  int estimateTs = DateTime(2020, 9, 23, 9, 28, 00).millisecondsSinceEpoch;
+  int estimateTs = DateTime(2020, 10, 20, 20, 50, 00).millisecondsSinceEpoch;
   var isDone;
   ConfettiController _controllerCenter;
 
@@ -76,18 +76,22 @@ class CountdownScreen extends State<Countdown> {
               isDone = true;
             });
           },
-          daysTextStyle: TextStyle(fontSize: 20, color: Colors.white54),
-          hoursTextStyle: TextStyle(fontSize: 30, color: Colors.white60),
-          minTextStyle: TextStyle(fontSize: 40, color: Colors.white70),
-          secTextStyle: TextStyle(fontSize: 50, color: Colors.white),
-          daysSymbolTextStyle: TextStyle(fontSize: 25, color: Colors.white54),
-          hoursSymbolTextStyle: TextStyle(fontSize: 35, color: Colors.white60),
-          minSymbolTextStyle: TextStyle(fontSize: 45, color: Colors.white70),
-          secSymbolTextStyle: TextStyle(fontSize: 55, color: Colors.white),
-          daysSymbol: "d",
-          hoursSymbol: "h",
-          minSymbol: "m",
-          secSymbol: "s",
+          widgetBuilder: (context, remainingTime){
+            if (remainingTime == null){
+              return emptyWidget();
+            }
+            List<Widget> timeList = [];
+            if (remainingTime.days != null) {
+              timeList.add(Text("${remainingTime.days.toString()}d", style: TextStyle(fontSize: 35, color: Colors.white54),));
+            } if (remainingTime.hours != null) {
+              timeList.add(Text("${remainingTime.hours.toString()}h", style: TextStyle(fontSize: 40, color: Colors.white60),));
+            } if (remainingTime.min != null) {
+              timeList.add(Text("${remainingTime.min.toString()}m", style: TextStyle(fontSize: 45, color: Colors.white70),));
+            } if (remainingTime.sec != null) {
+              timeList.add(Text("${remainingTime.sec.toString()}s", style: TextStyle(fontSize: 50, color: Colors.white),));
+            }
+            return Row(mainAxisAlignment: MainAxisAlignment.center, children: timeList,);
+          },
         ),
         Padding(
           padding: EdgeInsets.only(top: 30, left: 30, right: 30),
